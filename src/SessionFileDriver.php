@@ -9,7 +9,7 @@
 namespace jlaucho\practica;
 
 
-class SessionFileDriver
+class SessionFileDriver implements SessionDriversInterface
 {
     /**
      * @return array

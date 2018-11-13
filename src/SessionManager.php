@@ -19,7 +19,7 @@ class SessionManager
 
     protected $data = array();
 
-    public function __construct($fileDriver)
+    public function __construct(SessionDriversInterface $fileDriver)
     {
 
         $this->fileDriver = $fileDriver;

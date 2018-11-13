@@ -1,21 +1,18 @@
 <?php
 
 use jlaucho\practica\AccessHandler;
+use jlaucho\practica\Autenticatior;
+use jlaucho\practica\SessionArrayDriver;
+use jlaucho\practica\SessionManager;
+use jlaucho\practica\Stubs\AuthenticatedStubs;
 
 class AccessHandlerTest extends PHPUnit\Framework\TestCase
 {
     public function test_grant_access()
 
     {
-//        $filedriver = new \jlaucho\practica\SessionFileDriver();
-        $driver = new \jlaucho\practica\SessionArrayDriver([
-            "user_data" => [
-                "nombre" => "jesus Laucho",
-                "role"  => "admin"
-            ]
-        ]);
-        $session = new \jlaucho\practica\SessionManager($driver);
-        $auth = new \jlaucho\practica\Autenticatior($session);
+        $auth = new AuthenticatedStubs();
+
         $access = new AccessHandler( $auth );
         $this->assertTrue(
 
@@ -25,15 +22,8 @@ class AccessHandlerTest extends PHPUnit\Framework\TestCase
 
     public function test_deny_access()
     {
-//        $filedriver = new \jlaucho\practica\SessionFileDriver();
-        $driver = new \jlaucho\practica\SessionArrayDriver([
-            "user_data" => [
-                "nombre" => "jesus Laucjo",
-                "role"  => "admin"
-            ]
-        ]);
-        $session = new \jlaucho\practica\SessionManager($driver);
-        $auth = new \jlaucho\practica\Autenticatior($session);
+        $auth = new AuthenticatedStubs();
+
         $access = new AccessHandler($auth);
 
         $this->assertFalse(

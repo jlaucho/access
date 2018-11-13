@@ -8,7 +8,6 @@
 
 namespace jlaucho\practica;
 
-use jlaucho\practica\Autenticatior as Auth;
 
 
 class AccessHandler
@@ -20,7 +19,7 @@ class AccessHandler
      * AccessHandler constructor.
      * @param jlaucho\practica\Autenticatior $auth
      */
-    public function __construct(Auth $auth)
+    public function __construct(AuthenticatioInterface $auth)
     {
         $this->auth = $auth;
     }

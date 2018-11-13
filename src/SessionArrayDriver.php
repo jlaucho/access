@@ -9,7 +9,7 @@
 namespace jlaucho\practica;
 
 
-class SessionArrayDriver
+class SessionArrayDriver implements SessionDriversInterface
 {
     protected $data;
 

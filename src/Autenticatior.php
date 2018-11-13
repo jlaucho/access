@@ -11,7 +11,7 @@ namespace jlaucho\practica;
 use jlaucho\practica\SessionManager as Session;
 
 
-class Autenticatior
+class Autenticatior implements AuthenticatioInterface
 {
     protected $user;
     protected $session;
