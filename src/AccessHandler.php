@@ -19,7 +19,7 @@ class AccessHandler
      * AccessHandler constructor.
      * @param jlaucho\practica\Autenticatior $auth
      */
-    public function __construct(AuthenticatioInterface $auth)
+    public function __construct(Autenticatior $auth)
     {
         $this->auth = $auth;
     }
