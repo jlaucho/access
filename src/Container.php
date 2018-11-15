@@ -1,61 +1,78 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: jesus
+ * Date: 15/11/18
+ * Time: 07:42 AM
+ */
 
 namespace jlaucho\practica;
 
-class Container {
 
-   protected $shared = [];
-   protected static $container;
+use http\Exception\InvalidArgumentException;
+use ReflectionClass;
 
-    public static function getInstance()
-    {
-        if( static::$container == null ){
-            static::$container = new Container;
-        }
-        return static::$container;
-   }
+class Container
+{
+    protected $bindings = [];
+    protected $shared = [];
 
-    public static function setContainer(Container $container)
+    public function bind($name, $resolver )
     {
-        static::$container = $container;
-   }
-
-    public static function clearContainer()
-    {
-        static::$container = null;
-   }
-    public function session()
-    {
-        if( isset( $this->shared['session'] ) ){
-            return $this->shared['session'];
-        }
-        $data = [
-            'user_data' => [
-                'Name' => 'Jesus Laucho',
-                'role'  => 'teacher'
-            ]
+        $this->bindings[$name] = [
+            'resolver' => $resolver
         ];
-        $driver = new SessionArrayDriver($data);
-
-        return $this->shared['session'] = new SessionManager($driver);
     }
 
-    public function auth()
+    public function make($name)
     {
-        if( isset( $this->shared['auth'] ) ){
-            return $this->shared['auth'];
+        if(isset($this->shared[$name])) {
+            return $this->shared[$name];
         }
 
-        return $this->shared['auth'] = new Autenticatior($this->session());
+
+        $resolver = $this->bindings[$name]['resolver'];
+        if ($resolver instanceof \Closure){
+
+            $object = $resolver($this);
+        } else {
+
+            $object = $this->build($resolver);
+        }
+        return $object;
+
     }
-    public function access()
+
+
+    public function instance($name, $object)
     {
-        if( isset( $this->shared['access'] ) ){
-            return $this->shared['access'];
+        $this->shared[$name] = $object;
+    }
+
+    protected function build($name)
+    {
+        $reflection = new ReflectionClass($name);
+
+        if(!$reflection->isInstantiable()) {
+            throw new \InvalidArgumentException($name . " No es instanciable");
         }
 
-        return $this->shared['access'] = new AccessHandler($this->auth());
+        $constructor = $reflection->getConstructor();
 
+        if(!$constructor) {
+            return new $name;
+        }
 
+        $constructorParameters = $constructor->getParameters();
+
+        $arguments = array();
+        foreach ($constructorParameters as $constructorParameter) {
+            $parameterClassName = $constructorParameter->getClass()->getName();
+            $arguments[] = $this->build($parameterClassName);
+        }
+
+        return $reflection->newInstanceArgs($arguments);
     }
+
+
 }

@@ -1,6 +1,6 @@
 <?php
 
-use jlaucho\practica\{AccessHandler, Autenticatior, Container, SessionArrayDriver, SessionManager};
+use jlaucho\practica\Container;
 
 require __DIR__ . '/../bootstrap/start.php';
 
