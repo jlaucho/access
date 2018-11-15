@@ -22,19 +22,18 @@
     <h5 class="my-0 mr-md-auto font-weight-normal">RB Servicios</h5>
     <nav class="my-2 my-md-0 mr-md-3">
         <a class="p-2 text-dark" href="index.php">Home</a>
-
-        <?php ?>
+        <?php if($access->check('student')): ?>
         <a class="p-2 text-dark" href="student.php">Alumno</a>
-        <?php ?>
-        <?php ?>
+        <?php endif ?>
+        <?php if($access->check('teacher')): ?>
         <a class="p-2 text-dark" href="teacher.php">Profesor</a>
-        <?php ?>
+        <?php endif ?>
     </nav>
     <a class="btn btn-outline-primary" href="#">Sign up</a>
 </div>
 
 
-<?php echo $tempateContent;?>
+<?php echo $templateContent;?>
 
 </body>
 </html>

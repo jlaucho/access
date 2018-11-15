@@ -1,16 +1,9 @@
 <?php
 
-function view ($template, array $vars) {
+require __DIR__ . '/../vendor/autoload.php';
 
-    extract($vars);
+$whoops = new \Whoops\Run;
+$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+$whoops->register();
 
-    $path = __DIR__ . '/../views/';
-
-    ob_start();
-
-    require ($path . $template . '.php');
-
-    $templateContent = ob_get_clean();
-
-    require ($path . 'layout.php');
-}
+class_alias('\jlaucho\practica\AccessHandler', 'Access');
