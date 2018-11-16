@@ -83,7 +83,10 @@ class ContainerTest extends PHPUnit\Framework\TestCase
 
         $this->assertInstanceOf(
             MailDummy::class,
-            $container->make('mail', ['url'=>'https//gmail.com', 'key'=>'secret'])
+            $container->make(
+                'mail',
+                ['url' => 'rbservicios.com', 'key'=> 'secret']
+            )
         );
     }
 

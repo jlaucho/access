@@ -31,14 +31,18 @@ class Container
             return $this->shared[$name];
         }
 
+        if ($this->bindings[$name]){
+            $resolver = $this->bindings[$name]['resolver'];
+        } else {
+            $resolver = $name;
+        }
 
-        $resolver = $this->bindings[$name]['resolver'];
         if ($resolver instanceof \Closure){
 
             $object = $resolver($this);
         } else {
 
-            $object = $this->build($resolver);
+            $object = $this->build($resolver, $arguments);
         }
         return $object;
 
@@ -66,27 +70,32 @@ class Container
 
         $constructorParameters = $constructor->getParameters();
 
-        $arguments = array();
+        $dependency = array();
 
         foreach ($constructorParameters as $constructorParameter) {
 
             $name = $constructorParameter->getName();
+
+            if(isset($arguments[$name])){
+                $dependency[] = $arguments[$name];
+                continue;
+            }
+
             try {
-                $if_class = $constructorParameter->getClass();
+                $parameterClass = $constructorParameter->getClass();
             } catch (ReflectionException $e) {
                 throw new ContainerException('Error al intentar construir la clase '. $name .': '. $e->getMessage(), 888, $e);
             }
 
-            if($if_class !== null){
-                $parameterClassName = $if_class->getName();
-
-                $arguments[] = $this->build($parameterClassName);
+            if($parameterClass !== null){
+                $parameterClassName = $parameterClass->getName();
+                $dependency[] = $this->build($parameterClassName);
             } else {
                 throw new ContainerException("Introduce los datos de parametro[".$name."]");
             }
         }
 
-        return $reflection->newInstanceArgs($arguments);
+        return $reflection->newInstanceArgs($dependency);
     }
 
 
