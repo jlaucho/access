@@ -11,6 +11,7 @@ namespace jlaucho\practica;
 
 use http\Exception\InvalidArgumentException;
 use ReflectionClass;
+use ReflectionException;
 
 class Container
 {
@@ -24,7 +25,7 @@ class Container
         ];
     }
 
-    public function make($name)
+    public function make($name, array $arguments = array())
     {
         if(isset($this->shared[$name])) {
             return $this->shared[$name];
@@ -49,7 +50,7 @@ class Container
         $this->shared[$name] = $object;
     }
 
-    protected function build($name)
+    protected function build($name, array $arguments = array())
     {
         $reflection = new ReflectionClass($name);
 
@@ -66,9 +67,23 @@ class Container
         $constructorParameters = $constructor->getParameters();
 
         $arguments = array();
+
         foreach ($constructorParameters as $constructorParameter) {
-            $parameterClassName = $constructorParameter->getClass()->getName();
-            $arguments[] = $this->build($parameterClassName);
+
+            $name = $constructorParameter->getName();
+            try {
+                $if_class = $constructorParameter->getClass();
+            } catch (ReflectionException $e) {
+                throw new ContainerException('Error al intentar construir la clase '. $name .': '. $e->getMessage(), 888, $e);
+            }
+
+            if($if_class !== null){
+                $parameterClassName = $if_class->getName();
+
+                $arguments[] = $this->build($parameterClassName);
+            } else {
+                throw new ContainerException("Introduce los datos de parametro[".$name."]");
+            }
         }
 
         return $reflection->newInstanceArgs($arguments);
